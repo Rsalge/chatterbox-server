@@ -3,7 +3,7 @@ var app = {
 
   //TODO: The current 'handleUsernameClick' function just toggles the class 'friend'
   //to all messages sent by the user
-  server: '127.0.0.1:3000/classes/messages',
+  server: 'http://127.0.0.1:3000/classes/messages',
   username: 'anonymous',
   roomname: 'lobby',
   lastMessageId: 0,
@@ -42,7 +42,8 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'POST',
-      data: message,
+      // data: message,
+      data: {message:'find me!'},
       success: function (data) {
         // Clear messages input
         app.$message.val('');
@@ -234,3 +235,5 @@ var app = {
     $('form input[type=submit]').attr('disabled', null);
   }
 };
+
+// exp orts.app = app;
