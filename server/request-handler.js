@@ -1,31 +1,35 @@
-var results = [];
+var results = [{objectId:0}];
+var messageCount = 1;
 var qs = require('querystring');
 var requestHandler = function(request, response) {
-  var statusCode = 200; 
+  var statusCode = 200;
 
-  
+
 
   if (request.method === 'POST') {
     var body = '';
-    statusCode = 201;    
+    statusCode = 201;
     request.on('data', function(data) {
       //var bigData = qs.parse(data);
       console.log('Data coming in: ', data);
       body += data;
       var bigData = qs.parse(body);
       console.log('This is the request object data', bigData);
-      results.push(bigData);
+      bigData.objectId = messageCount++;
+      results.unshift(bigData);
     });
-  } else if (request.method === 'GET') {
-    statusCode = 200;  
-  } else if (request.method === null) {
+  }
+  // else if (request.method === 'GET') {
+    // statusCode = 200;
+  // }
+  else if (request.method === null) {
     statusCode = 404;
   }
-  
+
   if (request.url !== '/classes/messages') {
     statusCode = 404;
   }
-  
+
   var headers = defaultCorsHeaders;
 
   headers['Content-Type'] = 'application/JSON';

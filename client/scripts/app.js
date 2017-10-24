@@ -61,25 +61,37 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'GET',
-      data: { order: '-createdAt' },
+      // data:{order:'-objectId'} ,
+      data:{},
       contentType: 'application/json',
       success: function(data) {
+        var parse = JSON.parse(data);
+        console.log('Parsed data: ', parse);
+        console.log('Parsed data results: ', parse.results);
+
         // Don't bother if we have nothing to work with
-        if (!data.results || !data.results.length) { return; }
+        if (!parse.results || !parse.results.length) {
+          app.stopSpinner()
+          return;
+        }
 
         // Store messages for caching later
-        app.messages = data.results;
+        app.messages = parse.results;
 
         // Get the last message
-        var mostRecentMessage = data.results[data.results.length - 1];
+        var mostRecentMessage = parse.results[0];
 
-        // Only bother updating the DOM if we have a new message
+        // Only bother updating the DOM if we h ave a new message
+        console.log('Most recent message:', mostRecentMessage);
+        console.log('Most recent message:', app.lastMessageId);
+
         if (mostRecentMessage.objectId !== app.lastMessageId) {
           // Update the UI with the fetched rooms
-          app.renderRoomList(data.results);
+          console.log('we want to be here!')
+          app.renderRoomList(parse.results);
 
           // Update the UI with the fetched messages
-          app.renderMessages(data.results, animate);
+          app.renderMessages(parse.results, animate);
 
           // Store the ID of the most recent message
           app.lastMessageId = mostRecentMessage.objectId;
@@ -98,6 +110,7 @@ var app = {
   renderMessages: function(messages, animate) {
     // Clear existing messages`
     app.clearMessages();
+
     app.stopSpinner();
     if (Array.isArray(messages)) {
       // Add all fetched messages that are in our current room
@@ -226,13 +239,13 @@ var app = {
   },
 
   startSpinner: function() {
-    //$('.spinner img').show();
-    //$('form input[type=submit]').attr('disabled', 'true');
+    $('.spinner img').show();
+    $('form input[type=submit]').attr('disabled', null);
   },
 
   stopSpinner: function() {
-    //$('.spinner img').fadeOut('fast');
-    //$('form input[type=submit]').attr('disabled', null);
+    $('.spinner img').fadeOut('fast');
+    $('form input[type=submit]').attr('disabled', null);
   }
 };
 
